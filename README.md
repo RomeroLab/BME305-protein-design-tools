@@ -6,11 +6,11 @@ The shared Python tools also accept your own sequences and structures for later 
 
 ## Notebooks
 
-| Notebook | Design question | Open |
+| Notebook | Input and design objective | Open |
 | --- | --- | --- |
-| [ProteinMPNN](01_ProteinMPNN_ubiquitin.ipynb) | Which sequences are compatible with the ubiquitin backbone? | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/01_ProteinMPNN_ubiquitin.ipynb) |
-| [ESM-2](02_ESM2_sequence_generation.ipynb) | What variants can a sequence model propose? | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/02_ESM2_sequence_generation.ipynb) |
-| [RFdiffusion + ProteinMPNN](03_RFdiffusion_ProteinMPNN_denovo.ipynb) | Can we design a protein starting from a new backbone? | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/03_RFdiffusion_ProteinMPNN_denovo.ipynb) |
+| [ProteinMPNN](01_ProteinMPNN_ubiquitin.ipynb) | Fixed ubiquitin backbone → alternative sequences. | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/01_ProteinMPNN_ubiquitin.ipynb) |
+| [ESM-2](02_ESM2_sequence_generation.ipynb) | Ubiquitin sequence → variants from sequence context. | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/02_ESM2_sequence_generation.ipynb) |
+| [RFdiffusion + ProteinMPNN](03_RFdiffusion_ProteinMPNN_denovo.ipynb) | Target length → a new backbone and compatible sequences. | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/03_RFdiffusion_ProteinMPNN_denovo.ipynb) |
 
 ## Getting started
 
