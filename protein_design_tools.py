@@ -65,7 +65,7 @@ def load_pdb(source, chain=None, output=None):
 
 
 def load_ESMFold(device='cuda'):
-    """Download/cache ESMFold once, with memory settings for a free Colab GPU."""
+    """Download/cache ESMFold once, with memory-efficient GPU settings."""
     import torch
     from transformers import AutoTokenizer, EsmForProteinFolding
     key = ('ESMFold', device)
@@ -201,7 +201,7 @@ def load_RFdiffusion():
     (rf/'models').mkdir(exist_ok=True)
     if not (rf/'models/Base_ckpt.pt').exists():
         urlretrieve('https://files.ipd.uw.edu/pub/RFdiffusion/6f5902ac237024bdd0c176cb93063dc4/Base_ckpt.pt', rf/'models/Base_ckpt.pt')
-    # Initialize the diffusion cache before class, without generating a design.
+    # Initialize the diffusion cache without generating a design.
     subprocess.run([str(rf_python),str(rf/'run_inference.py'), 'contigmap.contigs=[60-60]','diffuser.T=50','inference.num_designs=0', f'inference.ckpt_override_path={rf}/models/Base_ckpt.pt'], env=dict(os.environ,DGLBACKEND='pytorch'),check=True)
     print('RFdiffusion ready.')
     return rf, rf_python
@@ -210,8 +210,8 @@ def load_RFdiffusion():
 def RFdiffusion(length=60, steps=50, seed=7, output_dir=None):
     """Generate one unconditional backbone and return its PDB path.
 
-    This short classroom wrapper supports length-only generation, not binders
-    or motif scaffolding. Run load_RFdiffusion before class to finish setup.
+    This wrapper supports length-only generation. Use the upstream project
+    for binders or motif scaffolding. load_RFdiffusion initializes dependencies.
     """
     rf, rf_python = _cache()/'RFdiffusion', _cache()/'rf_env/bin/python'
     if not rf_python.exists() or not (rf/'models/Base_ckpt.pt').exists():
