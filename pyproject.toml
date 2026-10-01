@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "protein-design-class-tools"
+version = "0.1.0"
+description = "Reusable protein design tools for teaching in Colab"
+requires-python = ">=3.10,<3.13"
+dependencies = ["biopython==1.85", "py3Dmol==2.5.3", "transformers==4.57.6", "accelerate==1.0.1", "numpy>=1.26,<3"]
+
+[tool.setuptools]
+py-modules = ["protein_design_tools"]

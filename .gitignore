@@ -1,0 +1,6 @@
+__pycache__/
+*.egg-info/
+.venv/
+protein_demo/
+*.zip
+.ipynb_checkpoints/
