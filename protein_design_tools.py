@@ -66,13 +66,22 @@ def load_pdb(source, chain=None, output=None):
 
 def load_ESMFold(device='cuda'):
     """Download/cache ESMFold once, with memory settings for a free Colab GPU."""
+    import torch
     from transformers import AutoTokenizer, EsmForProteinFolding
     key = ('ESMFold', device)
     if key not in _MODELS:
         revision = '75a3841ee059df2bf4d56688166c8fb459ddd97a'
         tokenizer = AutoTokenizer.from_pretrained('facebook/esmfold_v1', revision=revision)
-        model = EsmForProteinFolding.from_pretrained('facebook/esmfold_v1', revision=revision, device_map={'':device}).eval()
-        if device.startswith('cuda'): model.esm = model.esm.half()
+        # Load directly in half precision; a full-float GPU load exceeds a T4.
+        dtype = torch.float16 if device.startswith('cuda') else torch.float32
+        model = EsmForProteinFolding.from_pretrained('facebook/esmfold_v1', revision=revision, dtype=dtype, device_map={'':device}).eval()
+        # Keep the folding trunk, heads and layer-combination weights in float32.
+        # Converting only after loading avoids ever expanding the large ESM stem.
+        if device.startswith('cuda'):
+            for name, module in model.named_children():
+                if name != 'esm': module.float()
+            for parameter in model.parameters(recurse=False):
+                parameter.data = parameter.data.float()
         model.trunk.set_chunk_size(64)
         _MODELS[key] = tokenizer, model
     return _MODELS[key]

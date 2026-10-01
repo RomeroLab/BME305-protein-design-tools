@@ -7,8 +7,8 @@ Reusable tools for short Colab demonstrations and later class projects. The note
 Choose **T4 GPU** and **runtime version 2026.07** (Python 3.12). Run setup before class; model downloads are excluded from the ten-minute walkthrough.
 
 ```python
-!git clone -q https://github.com/RomeroLab/BME305-protein-design-tools.git
-%pip -q install ./BME305-protein-design-tools
+!git -C BME305-protein-design-tools pull -q 2>/dev/null || git clone -q https://github.com/RomeroLab/BME305-protein-design-tools.git
+%pip -q install --upgrade ./BME305-protein-design-tools
 from protein_design_tools import load_pdb, load_ESMFold, predict_structure, MPNNdesign, alignment, view_structure, inspect_prediction
 
 load_ESMFold()
@@ -19,7 +19,7 @@ prediction = predict_structure(designs['design_1'], num_recycles=1)
 metrics = inspect_prediction(backbone, prediction)
 ```
 
-For a new runtime, clone once. If the folder is already present, omit the clone command. PyTorch is supplied by Colab; for another environment, install a suitable PyTorch build first. RFdiffusion needs Linux and a CUDA GPU; the other tools can take `device='cpu'`, but structure prediction will be slow. Dependency versions are pinned to the tested Colab runtime.
+Setup clones the tools on first use and pulls updates on later runs. After updating an already imported library, restart the session and rerun setup. PyTorch is supplied by Colab; for another environment, install a suitable PyTorch build first. RFdiffusion needs Linux and a CUDA GPU; the other tools can take `device='cpu'`, but structure prediction will be slow. Dependency versions are pinned to the tested Colab runtime.
 
 ## Notebooks
 
@@ -57,3 +57,7 @@ ESM-2 is a masked language model, so `ESM2design` generates variants around a su
 The upstream model revisions and dependencies retain the versions used in the original demos. Those demos ran on a free Colab T4; their design/inspection runs were below ten minutes after setup. This shared-library refactor has CPU contract tests; its GPU pathways should receive a fresh classroom trial before teaching. Run `python -m unittest -v test_tools` from the repository to check file loading and wrapper contracts without downloading models.
 
 Model weights and upstream software are downloaded during setup, not included here. Their original licenses and terms apply: [ProteinMPNN](https://github.com/dauparas/ProteinMPNN), [ESM-2 / ESMFold](https://github.com/facebookresearch/esm), [RFdiffusion](https://github.com/RosettaCommons/RFdiffusion), and the [RFdiffusion Colab adaptation](https://github.com/sokrypton/RFdiffusion).
+
+### ESMFold loading memory
+
+Version 0.1.1 loads CUDA weights directly in float16, then restores float32 only for the smaller folding trunk, heads, and layer-combination weights. This avoids the initial full-float GPU allocation that can exhaust a T4 before the old loader reaches its precision conversion. A regression test checks loading dtype, mixed precision and reuse of the cached model. After a CUDA out-of-memory error, restart the session before rerunning the updated setup to release tensors retained by the failed call.

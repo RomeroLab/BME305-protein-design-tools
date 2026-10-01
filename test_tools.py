@@ -137,6 +137,31 @@ class ToolContracts(unittest.TestCase):
         self.assertIn('inference.design_startnum=11', run.call_args.args[0])
         self.assertEqual(result.name, 'backbone_11.pdb')
 
+    def test_fold_loads_half_before_dispatch_and_preserves_folding_precision(self):
+        import torch
+        model = torch.nn.Module()
+        model.esm = torch.nn.Linear(2,2).half()
+        model.trunk = torch.nn.Linear(2,2).half()
+        model.trunk.set_chunk_size = lambda size: None
+        model.head = torch.nn.Linear(2,2).half()
+        model.esm_s_combine = torch.nn.Parameter(torch.zeros(2, dtype=torch.float16))
+        module = types.ModuleType('transformers')
+        from unittest.mock import Mock
+        module.AutoTokenizer = types.SimpleNamespace(from_pretrained=Mock(return_value=object()))
+        module.EsmForProteinFolding = types.SimpleNamespace(from_pretrained=Mock(return_value=model))
+        with patch.dict('sys.modules', {'transformers':module}), patch.dict(tools._MODELS, {}, clear=True):
+            first = tools.load_ESMFold()
+            second = tools.load_ESMFold()
+        kwargs = module.EsmForProteinFolding.from_pretrained.call_args.kwargs
+        self.assertEqual(kwargs['dtype'], torch.float16)
+        self.assertEqual(kwargs['device_map'], {'':'cuda'})
+        self.assertEqual(model.esm.weight.dtype, torch.float16)
+        self.assertEqual(model.trunk.weight.dtype, torch.float32)
+        self.assertEqual(model.head.weight.dtype, torch.float32)
+        self.assertEqual(model.esm_s_combine.dtype, torch.float32)
+        self.assertIs(first, second)
+        self.assertEqual(module.EsmForProteinFolding.from_pretrained.call_count, 1)
+
     def test_saved_bundle_retains_reference_and_prediction(self):
         import zipfile
         bundle = tools.save_results({'design_1':'GK'}, self.pdb, self.pdb, output=self.root/'results.zip')
