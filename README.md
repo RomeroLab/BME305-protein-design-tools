@@ -6,11 +6,11 @@ The shared Python tools also accept your own sequences and structures for later 
 
 ## Notebooks
 
-| Notebook | Input and design objective | Open |
-| --- | --- | --- |
-| [ProteinMPNN](01_ProteinMPNN_ubiquitin.ipynb) | Fixed ubiquitin backbone → alternative sequences. | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/01_ProteinMPNN_ubiquitin.ipynb) |
-| [ESM-2](02_ESM2_sequence_generation.ipynb) | Ubiquitin sequence → variants from sequence context. | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/02_ESM2_sequence_generation.ipynb) |
-| [RFdiffusion + ProteinMPNN](03_RFdiffusion_ProteinMPNN_denovo.ipynb) | Target length → a new backbone and compatible sequences. | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/03_RFdiffusion_ProteinMPNN_denovo.ipynb) |
+| Notebook | Input | Design objective | Open |
+| --- | --- | --- | --- |
+| [ProteinMPNN](01_ProteinMPNN_ubiquitin.ipynb) | Ubiquitin backbone | Alternative sequences compatible with a fixed backbone | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/01_ProteinMPNN_ubiquitin.ipynb) |
+| [ESM-2](02_ESM2_sequence_generation.ipynb) | Ubiquitin sequence | Variants with a specified number of substitutions, sampled from sequence context | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/02_ESM2_sequence_generation.ipynb) |
+| [RFdiffusion + ProteinMPNN](03_RFdiffusion_ProteinMPNN_denovo.ipynb) | Target length | A new backbone and sequences compatible with it | [Colab](https://colab.research.google.com/github/RomeroLab/BME305-protein-design-tools/blob/main/03_RFdiffusion_ProteinMPNN_denovo.ipynb) |
 
 ## Getting started
 
@@ -59,9 +59,9 @@ Optional `output` and `output_dir` arguments let you choose where results are sa
 
 ## Interpreting designs
 
-ProteinMPNN conditions sequence generation on a backbone. ESM-2 proposes variants from sequence context. RFdiffusion generates a backbone that can then be assigned a sequence with ProteinMPNN. ESMFold predicts from sequence alone, providing a separate comparison with the intended structure.
+ProteinMPNN conditions sequence generation on a backbone. ESM-2 proposes variants from sequence context. RFdiffusion generates a backbone that can then be assigned a sequence with ProteinMPNN. ESMFold predicts from sequence alone, without the reference coordinates, providing a separate comparison with the reference backbone.
 
-RMSD describes structural agreement; pLDDT describes confidence in the prediction. A matching predicted fold and high confidence do not establish experimental folding or biological function.
+RMSD measures backbone agreement; pLDDT describes confidence in the prediction. A matching predicted fold and high confidence do not establish experimental folding or biological function.
 
 These tools support single-chain design, ESM-2 variants around a seed sequence, and unconditional RFdiffusion backbones. Sequence comparisons assume equal lengths and corresponding positions; structure overlays assume corresponding Cα atoms. For insertions, deletions, or unrelated proteins, use an appropriate sequence or structural alignment method.
 
